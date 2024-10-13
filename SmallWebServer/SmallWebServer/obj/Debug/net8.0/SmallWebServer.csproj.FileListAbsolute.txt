@@ -1,0 +1,12 @@
+C:\Coding Journey\SmallWebServer\SmallWebServer\SmallWebServer\bin\Debug\net8.0\SmallWebServer.deps.json
+C:\Coding Journey\SmallWebServer\SmallWebServer\SmallWebServer\bin\Debug\net8.0\SmallWebServer.dll
+C:\Coding Journey\SmallWebServer\SmallWebServer\SmallWebServer\bin\Debug\net8.0\SmallWebServer.pdb
+C:\Coding Journey\SmallWebServer\SmallWebServer\SmallWebServer\obj\Debug\net8.0\SmallWebServer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Coding Journey\SmallWebServer\SmallWebServer\SmallWebServer\obj\Debug\net8.0\SmallWebServer.AssemblyInfoInputs.cache
+C:\Coding Journey\SmallWebServer\SmallWebServer\SmallWebServer\obj\Debug\net8.0\SmallWebServer.AssemblyInfo.cs
+C:\Coding Journey\SmallWebServer\SmallWebServer\SmallWebServer\obj\Debug\net8.0\SmallWebServer.csproj.CoreCompileInputs.cache
+C:\Coding Journey\SmallWebServer\SmallWebServer\SmallWebServer\obj\Debug\net8.0\SmallWebServer.sourcelink.json
+C:\Coding Journey\SmallWebServer\SmallWebServer\SmallWebServer\obj\Debug\net8.0\SmallWebServer.dll
+C:\Coding Journey\SmallWebServer\SmallWebServer\SmallWebServer\obj\Debug\net8.0\refint\SmallWebServer.dll
+C:\Coding Journey\SmallWebServer\SmallWebServer\SmallWebServer\obj\Debug\net8.0\SmallWebServer.pdb
+C:\Coding Journey\SmallWebServer\SmallWebServer\SmallWebServer\obj\Debug\net8.0\ref\SmallWebServer.dll
