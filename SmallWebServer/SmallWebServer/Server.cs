@@ -6,6 +6,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using static SmallWebServer.Router;
 
 namespace SmallWebServer
 {
@@ -72,21 +73,24 @@ namespace SmallWebServer
             Log(context.Request);
 
             HttpListenerRequest request = context.Request;
-            //Refactor so only the path is considered and not parameters after the "?"
-            string path = request.Url.OriginalString;
+            string path = request.RawUrl;
             string verb = request.HttpMethod;
             NameValueCollection parms = request.QueryString;
 
-            router.Route(verb, path, parms);
+            Log(parms);
 
-            
+            var resp = router.Route(verb, path, parms);
+            Respond(context.Response, resp);
+        }
 
-            /*string response = @"<html><head><meta http-equiv='content-type' content='text/html; charset=utf-8'/>
-            </head><h1>Hello Browser!</h1></html> ";
-            byte[] encoded = Encoding.UTF8.GetBytes(response);
-            context.Response.ContentLength64 = encoded.Length;
-            context.Response.OutputStream.Write(encoded, 0, encoded.Length);
-            context.Response.OutputStream.Close();*/
+        private static void Respond(HttpListenerResponse response, ResponsePacket resp)
+        {
+            response.ContentType = resp.ContentType;
+            response.ContentLength64 = resp.Data.Length;
+            response.OutputStream.Write(resp.Data, 0, resp.Data.Length);
+            response.ContentEncoding = resp.Encoding;
+            response.StatusCode = (int)HttpStatusCode.OK;
+            response.OutputStream.Close();
         }
 
         public static void Start(string websitePath)
@@ -97,15 +101,27 @@ namespace SmallWebServer
             Start(listener);
         }
 
-        public static void Log(HttpListenerRequest request)
+        private static void Log(HttpListenerRequest request)
         {
             Console.WriteLine(request.RemoteEndPoint + " sends " + request.HttpMethod + " to /" + 
                 request.Url.AbsoluteUri);
         }
 
+        private static void Log(NameValueCollection parms)
+        {
+            var items = parms.AllKeys.SelectMany(parms.GetValues, (k, v) => new { key = k, value = v });
+
+            foreach ( var item in items )
+            {
+                Console.WriteLine(item.key + " : " + Uri.UnescapeDataString(item.value.ToString()));
+            }
+        }
+
         public static string GetWebsitePath()
         {
-            string websitePath = AppDomain.CurrentDomain.BaseDirectory;
+            string appPath = AppDomain.CurrentDomain.BaseDirectory;
+            string websitePath = Path.GetFullPath(Path.Combine(appPath, @"..\..\..\Website"));
+
 
             return websitePath;
         }

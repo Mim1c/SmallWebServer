@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
+using System.Net;
 using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,19 +15,24 @@ namespace SmallWebServer
 
         private Dictionary<string, ExtensionInfo> extFolderMap;
 
+        public const string POST = "post";
+        public const string GET = "get";
+        public const string PUT = "put";
+        public const string DELETE = "delete";
+
         public Router() 
         {
             extFolderMap = new Dictionary<string, ExtensionInfo>()
             {
                 {"ico", new ExtensionInfo() {Loader=ImageLoader, ContentType="image/ico"}},
-                  {"png", new ExtensionInfo() {Loader=ImageLoader, ContentType="image/png"}},
-                  {"jpg", new ExtensionInfo() {Loader=ImageLoader, ContentType="image/jpg"}},
-                  {"gif", new ExtensionInfo() {Loader=ImageLoader, ContentType="image/gif"}},
-                  {"bmp", new ExtensionInfo() {Loader=ImageLoader, ContentType="image/bmp"}},
-                  {"html", new ExtensionInfo() {Loader=PageLoader, ContentType="text/html"}},
-                  {"css", new ExtensionInfo() {Loader=FileLoader, ContentType="text/css"}},
-                  {"js", new ExtensionInfo() {Loader=FileLoader, ContentType="text/javascript"}},
-                  {"", new ExtensionInfo() {Loader=PageLoader, ContentType="text/html"}},
+                {"png", new ExtensionInfo() {Loader=ImageLoader, ContentType="image/png"}},
+                {"jpg", new ExtensionInfo() {Loader=ImageLoader, ContentType="image/jpg"}},
+                {"gif", new ExtensionInfo() {Loader=ImageLoader, ContentType="image/gif"}},
+                {"bmp", new ExtensionInfo() {Loader=ImageLoader, ContentType="image/bmp"}},
+                {"html", new ExtensionInfo() {Loader=PageLoader, ContentType="text/html"}},
+                {"css", new ExtensionInfo() {Loader=FileLoader, ContentType="text/css"}},
+                {"js", new ExtensionInfo() {Loader=FileLoader, ContentType="text/javascript"}},
+                {"", new ExtensionInfo() {Loader=PageLoader, ContentType="text/html"}},
             };
         }
         /// <summary>
@@ -69,7 +76,7 @@ namespace SmallWebServer
 
             if (fullPath == WebsitePath)
             {
-                ret = Route(GET, "/index.html", null);
+                ret = Route(GET, "/test.html", null);
             }
             else
             {
@@ -77,12 +84,37 @@ namespace SmallWebServer
                 {
                     fullPath = fullPath + ".html";
                 }
-
-                fullPath = WebsitePath + "\\Pages";
+                //Needs right side of path
+                fullPath = WebsitePath + "\\Pages" + "\\test.html";
                 ret = FileLoader(fullPath, ext, extInfo);
             }
             return ret;
         }
+
+        public ResponsePacket Route(string verb, string path, NameValueCollection parms)
+        {
+            string ext;
+            if (path.Contains("."))
+            {
+                ext = path.Substring(path.LastIndexOf('.') + 1);
+            }
+            else
+            {
+                ext = "";
+            }
+            ExtensionInfo extInfo;
+            ResponsePacket ret = null;
+
+            if (extFolderMap.TryGetValue(ext, out extInfo))
+            {
+                string fullPath = WebsitePath + path;
+                ret = extInfo.Loader(fullPath, ext, extInfo);
+            }
+
+            return ret;
+        }
+
+        
 
         public class ResponsePacket
         {
@@ -95,7 +127,7 @@ namespace SmallWebServer
         internal class ExtensionInfo
         {
             public string ContentType { get; set; }
-            public Func<string,string,string, ExtensionInfo, ResponsePacket> Loader { get; set; }
+            public Func<string,string, ExtensionInfo, ResponsePacket> Loader { get; set; }
         }
     }
 }
