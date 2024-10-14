@@ -1,0 +1,1 @@
+This project servers as an exercise as to how web servers work and to improve C# knowledge, by building a simple web server which can take http requests and return files like .html .css .js which gets displayed on the clients browser.
