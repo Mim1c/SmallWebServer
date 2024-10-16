@@ -20,8 +20,12 @@ namespace SmallWebServer
         public const string PUT = "put";
         public const string DELETE = "delete";
 
-        public Router() 
+        protected Server server;
+
+        public Router(Server server) 
         {
+            this.server = server;
+
             extFolderMap = new Dictionary<string, ExtensionInfo>()
             {
                 {"ico", new ExtensionInfo() {Loader=ImageLoader, ContentType="image/ico"}},
@@ -109,6 +113,10 @@ namespace SmallWebServer
                 string fullPath = WebsitePath + path;
                 ret = extInfo.Loader(fullPath, ext, extInfo);
             }
+            else
+            {
+                ret = new ResponsePacket() { Error = Server.ServerError.UnknownType };
+            }
 
             return ret;
         }
@@ -121,6 +129,12 @@ namespace SmallWebServer
             public byte[] Data { get; set; }
             public string ContentType { get; set; }
             public Encoding Encoding { get; set; }
+            public Server.ServerError Error { get; set; }
+
+            public ResponsePacket()
+            {
+                Error = Server.ServerError.OK;
+            }
         }
 
         internal class ExtensionInfo

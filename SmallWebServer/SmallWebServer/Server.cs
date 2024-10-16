@@ -10,7 +10,7 @@ using static SmallWebServer.Router;
 
 namespace SmallWebServer
 {
-    public static class Server
+    public class Server
     {
         public enum ServerError
         {
@@ -23,8 +23,21 @@ namespace SmallWebServer
             UnknownType,
         }
 
-        private static HttpListener listener;
-        private static Router router = new Router();
+        public Func<ServerError, string> OnError { get; set; }
+        public int MaxSimultaneousConnections { get; set; }
+
+        private HttpListener listener;
+
+        protected Router router;
+        private Semaphore sem;
+        
+
+        public Server()
+        {
+            MaxSimultaneousConnections = 20;
+            router = new Router(this);
+            sem = new Semaphore(maxSimultaneousConnections, maxSimultaneousConnections);
+        }
         /// <summary>
         /// Returns list of IP addresses assigned to localhost network devices, such as hardwired ethernet, wireless, etc.
         /// </summary>
@@ -53,8 +66,6 @@ namespace SmallWebServer
             return listener;
         }
 
-        public static int maxSimultaneousConnections = 20;
-        private static Semaphore sem = new Semaphore(maxSimultaneousConnections, maxSimultaneousConnections);
 
         //Start worker thread which listens for connections
         //PORT: 80 HTTP - 433 HTTPS
@@ -90,11 +101,11 @@ namespace SmallWebServer
 
             Log(parms);
 
-            var resp = router.Route(verb, path, parms);
+            ResponsePacket resp = router.Route(verb, path, parms);
 
             if (resp.Error != ServerError.OK)
             {
-                resp = router.Route("get", onError(resp.Error), null);
+                resp.Redirect = OnError(resp.Error);
             }
 
             Respond(context.Response, resp);
@@ -112,6 +123,8 @@ namespace SmallWebServer
 
         public static void Start(string websitePath)
         {
+            OnError.IfNull(() => Console.WriteLine("Warning - the onError callback has not been initialized by the application."));
+
             //Receives the path for the Website folder
             router.WebsitePath = websitePath;
 
