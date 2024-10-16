@@ -12,6 +12,17 @@ namespace SmallWebServer
 {
     public static class Server
     {
+        public enum ServerError
+        {
+            OK,
+            ExpiredSession,
+            NotAuthorized,
+            FileNotFound,
+            PageNotFound,
+            ServerError,
+            UnknownType,
+        }
+
         private static HttpListener listener;
         private static Router router = new Router();
         /// <summary>
@@ -95,7 +106,9 @@ namespace SmallWebServer
 
         public static void Start(string websitePath)
         {
+            //Receives the path for the Website folder
             router.WebsitePath = websitePath;
+
             List<IPAddress> localHostIPs = GetLocalHostIPs();
             HttpListener listener = InitializeListener(localHostIPs);
             Start(listener);
@@ -115,15 +128,6 @@ namespace SmallWebServer
             {
                 Console.WriteLine(item.key + " : " + Uri.UnescapeDataString(item.value.ToString()));
             }
-        }
-
-        public static string GetWebsitePath()
-        {
-            string appPath = AppDomain.CurrentDomain.BaseDirectory;
-            string websitePath = Path.GetFullPath(Path.Combine(appPath, @"..\..\..\Website"));
-
-
-            return websitePath;
         }
     }
 }

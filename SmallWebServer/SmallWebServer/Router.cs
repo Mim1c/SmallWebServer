@@ -62,8 +62,7 @@ namespace SmallWebServer
             ResponsePacket ret = new ResponsePacket()
             {
                 Data = Encoding.UTF8.GetBytes(text),
-                ContentType =
-                extInfo.ContentType,
+                ContentType = extInfo.ContentType,
                 Encoding = Encoding.UTF8
             };
 
@@ -84,7 +83,7 @@ namespace SmallWebServer
                 {
                     fullPath = fullPath + ".html";
                 }
-                //Needs right side of path
+
                 fullPath = WebsitePath + "\\Pages" + "\\test.html";
                 ret = FileLoader(fullPath, ext, extInfo);
             }
