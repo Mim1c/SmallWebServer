@@ -91,6 +91,12 @@ namespace SmallWebServer
             Log(parms);
 
             var resp = router.Route(verb, path, parms);
+
+            if (resp.Error != ServerError.OK)
+            {
+                resp = router.Route("get", onError(resp.Error), null);
+            }
+
             Respond(context.Response, resp);
         }
 
